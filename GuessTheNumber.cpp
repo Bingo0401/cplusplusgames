@@ -10,7 +10,7 @@ int main(){
 srand(time(0));
 int guess, ans, max, min, numberOfGuess;
 numberOfGuess = 0;
-const int ANS = rand()%100 + 1;
+const int ANS = rand()%98 + 2;
 max = 100;
 min = 0;
 
