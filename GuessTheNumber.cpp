@@ -34,5 +34,6 @@ cout << "Congradulations, You guessed the answer " << ANS << " in " << numberOfG
 
 
 
+//coded by Bingo
 
 
