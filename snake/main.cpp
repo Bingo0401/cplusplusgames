@@ -254,3 +254,6 @@ bool ElementInDeque(Vector2 element, deque<Vector2> deque)
     }
     return false;
 }
+
+
+//coded by Bingo
