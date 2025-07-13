@@ -1,6 +1,7 @@
 #include <iostream>
 #include <raylib.h>
 #include <deque>
+#include <cmath>
 
 using namespace std;
 
@@ -8,10 +9,12 @@ const Color COLOR_BACKGROUND = {18, 18, 48, 255};
 const Color COLOR_FRAME = {200, 200, 200, 255};
 const Color COLOR_BALL = {255, 233, 0, 255};
 const Color COLOR_PADDLE = {0, 180, 255, 255};
-const Color BLOCK_COLORS[3] = {
+const Color BLOCK_COLORS[5] = {
     {100, 255, 100, 255},
     {255, 150, 50, 255},
-    {255, 100, 180, 255}
+    {255, 100, 180, 255},
+    {150, 100, 255, 255},  
+    {255, 220, 100, 255}   
 };
 
 
@@ -58,7 +61,7 @@ public:
         for (int i = 0; i < positions.size(); i++)
         {
             Rectangle segment = Rectangle{positions[i].x, positions[i].y, width, height};
-            DrawRectangleRounded(segment, 0.5, 6, BLOCK_COLORS[i%3]);
+            DrawRectangleRounded(segment, 0.5, 6, BLOCK_COLORS[int(positions[i].x / CELL_SIZE) % 5]);
         };
     }
 };
@@ -93,7 +96,7 @@ public:
         x += speed_x;
         y += speed_y;
         if (x + radius >= GetScreenWidth() - FRAME_WIDTH_SIDES || x - radius <= 0 + FRAME_WIDTH_SIDES)
-        {
+        {   
             speed_x *= -1;
         }
         if(y - radius <= 0 + FRAME_WIDTH_TOP)
@@ -171,7 +174,8 @@ public:
     void CheckCollisionWithPaddle()
     {
         if(CheckCollisionCircleRec(Vector2{ball.x, ball.y}, ball.radius, Rectangle{paddle.x, paddle.y, paddle.width, paddle.height}))
-        {
+        {   
+            ball.y = paddle.y - ball.radius;
             ball.speed_y *= -1;
         }
     }
@@ -181,8 +185,18 @@ public:
         for (int i = 0; i < block.positions.size(); i++)
         {
             if(CheckCollisionCircleRec(Vector2{ball.x, ball.y}, ball.radius, Rectangle{block.positions[i].x, block.positions[i].y, block.width, block.height}))
-            {
-                ball.speed_y *= -1;
+            {   
+                if (ball.y > block.positions[i].y)
+                {
+                    ball.y = block.positions[i].y + block.height + ball.radius;
+                    ball.speed_y = abs(ball.speed_y);
+                }
+                if (ball.y < block.positions[i].y)
+                {
+                    ball.y = block.positions[i].y - ball.radius;
+                    ball.speed_y = -abs(ball.speed_y);
+                }
+                //ball.speed_y *= -1;
                 score++;
                 block.positions.erase(block.positions.begin() + i);
             }
